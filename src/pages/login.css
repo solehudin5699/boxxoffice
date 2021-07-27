@@ -1,0 +1,26 @@
+.containerLogin {
+  height: 100vh;
+  background-color: #192a55;
+  opacity: 0.9;
+  background-image: url('../assets/images/bg-login.jpg');
+  background-size: cover;
+}
+.row {
+  height: 100vh;
+  background-color: rgba(25, 42, 85, 0.9);
+  overflow-y: auto;
+  padding: 10px 0 10px 0;
+}
+.logo {
+  width: calc((132 / 1280) * 100vw);
+  height: calc((26 / 1280) * 100vw);
+  min-width: 132px;
+  min-height: 26px;
+  /* margin-top: 50vh; */
+}
+/* @media only screen and (max-width: 768px) {
+  .logo {
+    margin-top: auto;
+    align-self: center;
+  }
+} */
