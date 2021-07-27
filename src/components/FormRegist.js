@@ -14,6 +14,7 @@ import {
   Container,
 } from 'react-bootstrap';
 import './formLogin.css';
+import SwitchToggle from './SwitchToggle';
 
 const TabHeader = ({ tab }) => {
   return (
@@ -76,7 +77,7 @@ const TabHeader = ({ tab }) => {
   );
 };
 
-const validationSchema = Yup.object({
+const validationSchemaPersonal = Yup.object({
   email: Yup.string().email('Invalid email address').required('Required'),
   name: Yup.string().required('Required'),
   password: Yup.string()
@@ -86,10 +87,14 @@ const validationSchema = Yup.object({
   phone: Yup.number().required('Required'),
   address: Yup.string().required('Required'),
 });
+const validationSchemaStore = Yup.object({
+  storeName: Yup.string().required('Required'),
+  storeAddress: Yup.string().required('Required'),
+});
 
 export default function FormRegist(props) {
   const [tab, setTab] = useState(1);
-  const [dataRegist, setDataRegist] = useState({});
+  const [dataRegist, setDataRegist] = useState({ image: '' });
   // const dispatch = useDispatch();
 
   const { isLogin } = useSelector((state) => state.auth);
@@ -104,6 +109,14 @@ export default function FormRegist(props) {
       history.push('/');
     }
   }, []);
+  const imageInputRef = React.useRef();
+  const handleChangeFile = (e) => {
+    let files = e.target.files;
+    setDataRegist({
+      ...dataRegist,
+      image: files[0],
+    });
+  };
   return (
     <Col className="col-12 col-md-8">
       <Card className="cardLogin">
@@ -123,9 +136,9 @@ export default function FormRegist(props) {
                     address: '',
                     password: '',
                   }}
-                  validationSchema={validationSchema}
+                  validationSchema={validationSchemaPersonal}
                   onSubmit={(values) => {
-                    setDataRegist(values);
+                    setDataRegist({ ...dataRegist, ...values });
                     setTab(2);
                   }}
                 >
@@ -152,8 +165,8 @@ export default function FormRegist(props) {
                           </Form.Text>
                         )}
                       </Form.Group>
-                      <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Label className="input-label">Name</Form.Label>
+                      <Form.Group className="mb-3" controlId="formBasicName">
+                        <Form.Label className="input-label">Nama</Form.Label>
                         <Form.Control
                           type="text"
                           placeholder="Masukkan name"
@@ -310,7 +323,153 @@ export default function FormRegist(props) {
                 </Formik>
               </Tab.Pane>
               <Tab.Pane eventKey={2}>
-                <h1 className="text-primary">2</h1>
+                <Formik
+                  initialValues={{
+                    storeName: '',
+                    storeAddress: '',
+                  }}
+                  validationSchema={validationSchemaStore}
+                  onSubmit={(values) => {
+                    // setDataRegist(values);
+                    // setTab(2);
+                  }}
+                >
+                  {(formik) => (
+                    <div>
+                      <input
+                        onChange={(e) => handleChangeFile(e)}
+                        ref={imageInputRef}
+                        type="file"
+                        className="d-none"
+                      />
+                      <div className="mb-3 mt-3 d-flex flex-column justify-content-center align-items-center">
+                        <div
+                          style={{
+                            width: '100px',
+                            height: '100px',
+                            backgroundColor: '#E8E8E8',
+                            overflow: 'hidden',
+                            cursor: 'pointer',
+                          }}
+                          onClick={() => {
+                            imageInputRef.current.click();
+                          }}
+                          className="rounded-circle d-flex justify-content-center align-items-center mb-3"
+                        >
+                          {dataRegist.image ? (
+                            <img
+                              style={{ width: '100px' }}
+                              alt=""
+                              src={
+                                dataRegist.image &&
+                                URL.createObjectURL(dataRegist.image)
+                              }
+                            />
+                          ) : (
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                          )}
+                        </div>
+                        <button
+                          style={{
+                            border: '2px solid #192a55',
+                            height: '40px',
+                            borderRadius: '4px',
+                            color: '#192a55',
+                            fontSize: '16px',
+                            fontWeight: '700',
+                          }}
+                          onClick={() => {
+                            imageInputRef.current.click();
+                          }}
+                        >
+                          Upload Logo
+                        </button>
+                      </div>
+                      <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Label className="input-label">
+                          Nama Toko{' '}
+                          <span className="text-muted">(wajib diisi)</span>
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Masukkan nama toko"
+                          {...formik.getFieldProps('storeName')}
+                          className={
+                            formik.touched.storeName &&
+                            formik.errors.storeName &&
+                            'inputError'
+                          }
+                        />
+                        {formik.touched.storeName &&
+                          formik.errors.storeName && (
+                            <Form.Text className="textError">
+                              {formik.errors.storeName}
+                            </Form.Text>
+                          )}
+                      </Form.Group>
+
+                      <Form.Group className="mb-3" controlId="formBasicAddress">
+                        <div className="d-flex justify-content-between align-items-center">
+                          <Form.Label className="input-label">
+                            Alamat
+                          </Form.Label>
+                          <SwitchToggle
+                            label="Gunakan alamat pribadi"
+                            labelClass="input-label"
+                          />
+                        </div>
+                        <Form.Control
+                          type="text"
+                          placeholder="Masukkan alamat kamu"
+                          {...formik.getFieldProps('storeAddress')}
+                          className={
+                            formik.touched.storeAddress &&
+                            formik.errors.storeAddress &&
+                            'inputError'
+                          }
+                          as="textarea"
+                          rows={3}
+                          maxLength={40}
+                        />
+                        {formik.touched.storeAddress &&
+                          formik.errors.storeAddress && (
+                            <Form.Text className="textError">
+                              {formik.errors.storeAddress}
+                            </Form.Text>
+                          )}
+                      </Form.Group>
+
+                      <button
+                        className="btnLogin mb-3"
+                        type="submit"
+                        onClick={formik.handleSubmit}
+                        style={{ outline: 'none' }}
+                      >
+                        {/* {isLoginPending ? (
+                    <i className='fa fa-spinner fa-spin fa-2x fa-fw'></i>
+                  ) : (
+                    "Sign In"
+                  )} */}
+                        Daftar Sekarang
+                      </button>
+                      <p className="loginAgreement mb-4">
+                        Dengan menggunakan aplikasi ini anda menyetujui{' '}
+                        <span className="linkLoginAgreement">
+                          syarat dan ketentuan
+                        </span>
+                      </p>
+                      <p className="questAccount">
+                        Sudah punya akun?{' '}
+                        <span
+                          onClick={() => history.push('/login')}
+                          className="linkRegist"
+                        >
+                          Login
+                        </span>
+                      </p>
+                    </div>
+                  )}
+                </Formik>
               </Tab.Pane>
             </Tab.Content>
           </Tab.Container>
