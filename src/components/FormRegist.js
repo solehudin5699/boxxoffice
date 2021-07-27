@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-// import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 // import { loginUser } from "../../redux/actions/users/auth";
 import { Formik } from 'formik';
@@ -92,15 +92,18 @@ export default function FormRegist(props) {
   const [dataRegist, setDataRegist] = useState({});
   // const dispatch = useDispatch();
 
-  // const { isLogin, isLoginPending, isLoginRejected, errorLogin } = useSelector(
-  //   (state) => state.auth
-  // );
+  const { isLogin } = useSelector((state) => state.auth);
   const history = useHistory();
-  // useEffect(() => {
-  //   if (isLogin) {
-  //     history.push("/");
-  //   }
-  // }, [isLogin]);
+  useEffect(() => {
+    if (isLogin) {
+      history.push('/');
+    }
+  }, [isLogin]);
+  useEffect(() => {
+    if (isLogin) {
+      history.push('/');
+    }
+  }, []);
   return (
     <Col className="col-12 col-md-8">
       <Card className="cardLogin">
